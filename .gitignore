@@ -61,5 +61,5 @@ build/*
 *.iml
 *.ipr
 *.iws
-resources/crossingschedule-firebase-adminsdk.json
 .env
+src/main/resources
