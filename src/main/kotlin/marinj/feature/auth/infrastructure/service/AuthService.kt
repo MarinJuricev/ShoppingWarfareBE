@@ -13,16 +13,16 @@ interface AuthService {
 }
 
 class AuthServiceImpl(
-    private val createUser: CreateUser,
+    private val createUserUseCase: CreateUser,
 ) : AuthService {
 
     override suspend fun createUser(
         email: String?,
         password: String?,
-    ): Either<Failure, ResponseUser> {
-        val createUserResult = when(createUser()){
+    ): Either<Failure, ResponseUser> =
+        when (createUserUseCase()) {
 
         }
-    }
 
+    }
 }
