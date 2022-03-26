@@ -3,6 +3,7 @@ val kotlin_version: String by project
 val logback_version: String by project
 val koin_version: String by project
 val exposed_version: String by project
+val hikari_version: String by project
 
 plugins {
     application
@@ -34,10 +35,12 @@ dependencies {
     implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:$ktor_version")
 
     implementation("ch.qos.logback:logback-classic:$logback_version")
-
+    // ORM
     implementation("org.jetbrains.exposed:exposed-core:$exposed_version")
     implementation("org.jetbrains.exposed:exposed-dao:$exposed_version")
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposed_version")
+    // High performance JDBC connection pooling
+    implementation("com.zaxxer:HikariCP:$hikari_version")
 
     implementation("io.insert-koin:koin-ktor:$koin_version")
     implementation("io.insert-koin:koin-logger-slf4j:$koin_version")

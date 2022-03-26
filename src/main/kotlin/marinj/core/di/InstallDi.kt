@@ -9,6 +9,7 @@ fun Application.installDi() {
     install(KoinPlugin) {
         slf4jLogger()
         modules(
+            databaseModule,
             authModule,
         )
     }
