@@ -22,26 +22,30 @@ class DatabaseInitializerImpl : DatabaseInitializer {
 
         transaction {
             addLogger(StdOutSqlLogger)
-            SchemaUtils.create(UsersDao)
+            SchemaUtils.create(
+                UsersDao,
+            )
         }
     }
 
     private fun generateHikariDatasource(): HikariDataSource {
-        val config = HikariConfig()
-        config.driverClassName = System.getenv("JDBC_DRIVER")
-        config.jdbcUrl = System.getenv("JDBC_DATABASE_URL")
-        config.maximumPoolSize = 3
-        config.isAutoCommit = false
-        config.transactionIsolation = "TRANSACTION_REPEATABLE_READ"
-        config.jdbcUrl = System.getenv("JDBC_DATABASE_URL")
-        System.getenv("DB_USER")?.let { username ->
-            config.username = username
+        return HikariConfig().apply {
+            driverClassName = System.getenv("JDBC_DRIVER")
+            jdbcUrl = System.getenv("JDBC_DATABASE_URL")
+            maximumPoolSize = 3
+            isAutoCommit = false
+            transactionIsolation = "TRANSACTION_REPEATABLE_READ"
+            jdbcUrl = System.getenv("JDBC_DATABASE_URL")
+            System.getenv("DB_USER")?.let { envUserName ->
+                username = envUserName
+            }
+            System.getenv("DB_PASSWORD")?.let { envPassword ->
+                password = envPassword
+            }
+            validate()
+        }.let { config ->
+            HikariDataSource(config)
         }
-        System.getenv("DB_PASSWORD")?.let { password ->
-            config.password = password
-        }
-        config.validate()
-        return HikariDataSource(config)
     }
 }
 

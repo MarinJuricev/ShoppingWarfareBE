@@ -13,6 +13,7 @@ import marinj.feature.auth.infrastructure.service.AuthService
 fun Application.installAuth() {
 
     val authService: AuthService by inject()
+
     val secret = environment.config.property("jwt.secret").getString()
     val issuer = environment.config.property("jwt.issuer").getString()
     val audience = environment.config.property("jwt.audience").getString()
@@ -29,12 +30,19 @@ fun Application.installAuth() {
                     .build()
             )
             validate { credential ->
-                if (credential.payload.getClaim("username").asString() != "") {
+                if (credential.payload.getClaim("id").asString() != "") {
                     JWTPrincipal(credential.payload)
                 } else {
                     null
                 }
             }
+//            validate { // 3
+//                val payload = it.payload
+//                val claim = payload.getClaim("id")
+//                val claimString = claim.asInt()
+//                val user = db.findUser(claimString) // 4
+//                user
+//            }
         }
     }
 

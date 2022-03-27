@@ -1,9 +1,10 @@
 package marinj.feature.auth.infrastructure.model
 
+import io.ktor.server.auth.Principal
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class ResponseUser(
-    val id: String,
     val username: String,
-)
+    val token: String,
+) : Principal
