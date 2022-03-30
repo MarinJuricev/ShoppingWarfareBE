@@ -9,7 +9,16 @@ class CreateUser(
 ) {
 
     suspend operator fun invoke(
-        email: String,
-        password: String,
-    ): Either<Failure, Unit> = authRepository.createUser(email, password)
+        email: String?,
+        userName: String?,
+        password: String?,
+    ): Either<Failure, Int> {
+        //TODO add validation and remove double bang
+
+        return authRepository.createUser(
+            email = email!!,
+            userName = userName!!,
+            password = password!!,
+        )
+    }
 }

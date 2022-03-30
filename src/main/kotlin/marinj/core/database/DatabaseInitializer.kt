@@ -4,7 +4,7 @@ import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import marinj.feature.auth.data.dao.UsersDao
+import marinj.feature.auth.data.dao.Users
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.StdOutSqlLogger
@@ -23,7 +23,7 @@ class DatabaseInitializerImpl : DatabaseInitializer {
         transaction {
             addLogger(StdOutSqlLogger)
             SchemaUtils.create(
-                UsersDao,
+                Users,
             )
         }
     }

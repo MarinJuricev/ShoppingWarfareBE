@@ -8,21 +8,22 @@ import marinj.feature.auth.domain.model.User
 import marinj.feature.auth.domain.repository.AuthRepository
 
 class AuthRepositoryImpl(
-    private val usersDao: UsersDao
+    private val usersDao: UsersDao,
 ) : AuthRepository {
 
     override suspend fun createUser(
         email: String,
         userName: String,
         password: String,
-    ): Either<Failure, Int> {
-        TODO("Not yet implemented")
-    }
+    ): Either<Failure, Int> =
+        usersDao.createUser(
+            email = email,
+            userName = userName,
+            password = password,
+        )
 
-    override suspend fun getUser(id: Int): Either<Failure, User> {
-        TODO("Not yet implemented")
-    }
-
+    override suspend fun getUser(id: Int): Either<Failure, User> =
+        usersDao.getUser(id = id)
 
     override suspend fun generateToken(): Either<Failure, Token> {
         TODO("Not yet implemented")

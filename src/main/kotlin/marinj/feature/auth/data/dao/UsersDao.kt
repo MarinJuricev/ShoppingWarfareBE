@@ -10,6 +10,7 @@ import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.select
 
 interface UsersDao {
     suspend fun createUser(
@@ -22,10 +23,10 @@ interface UsersDao {
 }
 
 object Users : Table(), UsersDao {
-    val id: Column<Int> = integer("id").autoIncrement()
-    val email: Column<String> = varchar("email", 128).uniqueIndex()
-    val userName = varchar("user_name", 256)
-    val password = varchar("password", 64)
+    private val id: Column<Int> = integer("id").autoIncrement()
+    private val email: Column<String> = varchar("email", 128).uniqueIndex()
+    private val userName = varchar("user_name", 256)
+    private val password = varchar("password", 64)
 
     override val primaryKey = PrimaryKey(id)
 
@@ -38,8 +39,8 @@ object Users : Table(), UsersDao {
             Users.insert {
                 it[this.email] = email
                 it[this.userName] = userName
-                it[this.password] = password // TODO hash this
-            } get UsersDao.id
+                it[this.password] = password // TODO hash this in another layer, not here.
+            } get id
         }
 
         return if (userId > 0) {
@@ -52,7 +53,7 @@ object Users : Table(), UsersDao {
     override suspend fun getUser(id: Int): Either<Failure, User> {
         val user = dbQuery {
             select {
-                UsersDao.id eq id
+                Users.id eq id
             }.mapNotNull {
                 it.rowToUser()
             }.singleOrNull()
@@ -63,8 +64,8 @@ object Users : Table(), UsersDao {
 
     private fun ResultRow.rowToUser(): User =
         User(
-            email = this[usersDao.email],
-            userName = this[usersDao.userName],
-            password = this[usersDao.password],
+            email = this[email],
+            userName = this[userName],
+            password = this[password],
         )
 }

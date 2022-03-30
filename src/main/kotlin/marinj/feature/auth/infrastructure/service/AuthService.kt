@@ -9,6 +9,7 @@ interface AuthService {
     suspend fun createUser(
         email: String?,
         password: String?,
+        userName: String?,
     ): Either<Failure, ResponseUser>
 }
 
@@ -19,10 +20,10 @@ class AuthServiceImpl(
     override suspend fun createUser(
         email: String?,
         password: String?,
+        userName: String?,
     ): Either<Failure, ResponseUser> =
-        when (createUserUseCase()) {
-
+        when (createUserUseCase(email, password, userName)) {
+            is Either.Right -> TODO()
+            is Either.Left -> TODO()
         }
-
-    }
 }
