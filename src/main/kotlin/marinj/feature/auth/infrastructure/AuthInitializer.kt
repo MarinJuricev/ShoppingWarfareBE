@@ -7,29 +7,27 @@ import io.ktor.server.application.install
 import io.ktor.server.auth.Authentication
 import io.ktor.server.auth.jwt.JWTPrincipal
 import io.ktor.server.auth.jwt.jwt
+import marinj.core.config.AppConfig
 import marinj.core.di.inject
 import marinj.feature.auth.infrastructure.service.AuthService
 
 fun Application.installAuth() {
 
     val authService: AuthService by inject()
-
-    val secret = environment.config.property("jwt.secret").getString()
-    val issuer = environment.config.property("jwt.issuer").getString()
-    val audience = environment.config.property("jwt.audience").getString()
-    val myRealm = environment.config.property("jwt.realm").getString()
+    val appConfig: AppConfig by inject()
 
     install(Authentication) {
         jwt {
-            realm = myRealm
+            realm = appConfig.jwtConfig.secret
             verifier(
                 JWT
-                    .require(Algorithm.HMAC256(secret))
-                    .withAudience(audience)
-                    .withIssuer(issuer)
+                    .require(Algorithm.HMAC256(appConfig.jwtConfig.secret))
+                    .withAudience(appConfig.jwtConfig.audience)
+                    .withIssuer(appConfig.jwtConfig.issuer)
                     .build()
             )
             validate { credential ->
+                //TODO actually configure this to get the userId from the service
                 if (credential.payload.getClaim("id").asString() != "") {
                     JWTPrincipal(credential.payload)
                 } else {
