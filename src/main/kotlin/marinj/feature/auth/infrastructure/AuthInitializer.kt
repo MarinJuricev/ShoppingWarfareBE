@@ -7,23 +7,23 @@ import io.ktor.server.application.install
 import io.ktor.server.auth.Authentication
 import io.ktor.server.auth.jwt.JWTPrincipal
 import io.ktor.server.auth.jwt.jwt
-import marinj.core.config.AppConfig
+import marinj.core.config.ShoppingWarfareConfig
 import marinj.core.di.inject
 import marinj.feature.auth.infrastructure.service.AuthService
 
 fun Application.installAuth() {
 
     val authService: AuthService by inject()
-    val appConfig: AppConfig by inject()
+    val config: ShoppingWarfareConfig by inject()
 
     install(Authentication) {
         jwt {
-            realm = appConfig.jwtConfig.secret
+            realm = config.jwtConfig.secret
             verifier(
                 JWT
-                    .require(Algorithm.HMAC256(appConfig.jwtConfig.secret))
-                    .withAudience(appConfig.jwtConfig.audience)
-                    .withIssuer(appConfig.jwtConfig.issuer)
+                    .require(Algorithm.HMAC256(config.jwtConfig.secret))
+                    .withAudience(config.jwtConfig.audience)
+                    .withIssuer(config.jwtConfig.issuer)
                     .build()
             )
             validate { credential ->
