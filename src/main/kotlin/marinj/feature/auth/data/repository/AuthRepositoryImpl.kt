@@ -12,15 +12,8 @@ class AuthRepositoryImpl(
 ) : AuthRepository {
 
     override suspend fun createUser(
-        email: String,
-        userName: String,
-        password: String,
-    ): Either<Failure, Int> =
-        usersDao.createUser(
-            email = email,
-            userName = userName,
-            password = password,
-        )
+        user: User,
+    ): Either<Failure, Int> = usersDao.createUser(user)
 
     override suspend fun getUser(id: Int): Either<Failure, User> =
         usersDao.getUser(id = id)

@@ -13,11 +13,7 @@ import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 
 interface UsersDao {
-    suspend fun createUser(
-        email: String,
-        userName: String,
-        password: String,
-    ): Either<Failure, Int>
+    suspend fun createUser(user: User): Either<Failure, Int>
 
     suspend fun getUser(id: Int): Either<Failure, User>
 }
@@ -31,15 +27,13 @@ object Users : Table(), UsersDao {
     override val primaryKey = PrimaryKey(id)
 
     override suspend fun createUser(
-        email: String,
-        userName: String,
-        password: String,
+        user: User,
     ): Either<Failure, Int> {
         val userId: Int = dbQuery {
             Users.insert {
-                it[this.email] = email
-                it[this.userName] = userName
-                it[this.password] = password // TODO hash this in another layer, not here.
+                it[this.email] = user.email
+                it[this.userName] = user.userName
+                it[this.password] = user.password // TODO hash this in another layer, not here.
             } get id
         }
 

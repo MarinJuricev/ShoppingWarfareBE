@@ -8,6 +8,7 @@ import marinj.core.model.Failure
 import marinj.core.model.buildLeft
 import marinj.core.model.buildRight
 import marinj.feature.auth.data.dao.UsersDao
+import marinj.feature.auth.domain.model.User
 import marinj.feature.auth.domain.repository.AuthRepository
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -32,32 +33,26 @@ internal class AuthRepositoryImplTest {
 
     @Test
     fun `createUser should return result from userDao createUser`() = runTest {
+        val user = User(EMAIL, USER_NAME, PASSWORD)
         val daoResult = USER_ID.buildRight()
         coEvery {
-            usersDao.createUser(EMAIL, USER_NAME, PASSWORD)
+            usersDao.createUser(user)
         } coAnswers { daoResult }
 
-        val result = sut.createUser(
-            email = EMAIL,
-            userName = USER_NAME,
-            password = PASSWORD,
-        )
+        val result = sut.createUser(user)
 
         assertThat(result).isEqualTo(daoResult)
     }
 
     @Test
     fun `createUser should return failure result from userDao createUser`() = runTest {
+        val user = User(EMAIL, USER_NAME, PASSWORD)
         val daoResult = Failure.Unknown.buildLeft()
         coEvery {
-            usersDao.createUser(EMAIL, USER_NAME, PASSWORD)
+            usersDao.createUser(user)
         } coAnswers { daoResult }
 
-        val result = sut.createUser(
-            email = EMAIL,
-            userName = USER_NAME,
-            password = PASSWORD,
-        )
+        val result = sut.createUser(user)
 
         assertThat(result).isEqualTo(daoResult)
     }

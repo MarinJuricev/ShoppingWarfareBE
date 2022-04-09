@@ -22,8 +22,8 @@ fun Application.installAuth() {
             verifier(
                 JWT
                     .require(Algorithm.HMAC256(config.jwtConfig.secret))
-                    .withAudience(config.jwtConfig.audience)
                     .withIssuer(config.jwtConfig.issuer)
+                    .withAudience(config.jwtConfig.audience)
                     .build()
             )
             validate { credential ->
