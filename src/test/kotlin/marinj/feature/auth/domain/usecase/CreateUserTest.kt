@@ -7,7 +7,7 @@ import kotlinx.coroutines.test.runTest
 import marinj.core.model.Failure
 import marinj.core.model.buildLeft
 import marinj.feature.auth.domain.model.User
-import marinj.feature.auth.domain.repository.AuthRepository
+import marinj.feature.auth.domain.repository.UserRepository
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -17,14 +17,14 @@ private const val PASSWORD = "password"
 
 internal class CreateUserTest {
 
-    private val authRepository: AuthRepository = mockk()
+    private val userRepository: UserRepository = mockk()
 
     private lateinit var sut: CreateUser
 
     @BeforeEach
     fun setUp() {
         sut = CreateUser(
-            authRepository
+            userRepository
         )
     }
 
@@ -109,7 +109,7 @@ internal class CreateUserTest {
         )
         val repositoryResult = Failure.Unknown.buildLeft()
         coEvery {
-            authRepository.createUser(expectedUser)
+            userRepository.createUser(expectedUser)
         } coAnswers { repositoryResult }
 
         val result = sut(

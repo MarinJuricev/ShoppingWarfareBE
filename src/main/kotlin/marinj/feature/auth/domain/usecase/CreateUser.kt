@@ -7,10 +7,10 @@ import marinj.core.model.Failure
 import marinj.core.model.buildLeft
 import marinj.core.model.buildRight
 import marinj.feature.auth.domain.model.User
-import marinj.feature.auth.domain.repository.AuthRepository
+import marinj.feature.auth.domain.repository.UserRepository
 
 class CreateUser(
-    private val authRepository: AuthRepository,
+    private val userRepository: UserRepository,
 ) {
 
     suspend operator fun invoke(
@@ -26,7 +26,7 @@ class CreateUser(
         }
 
         return when (validationResult) {
-            is Right -> authRepository.createUser(validationResult.value)
+            is Right -> userRepository.createUser(validationResult.value)
             is Left -> validationResult.error.buildLeft()
         }
     }

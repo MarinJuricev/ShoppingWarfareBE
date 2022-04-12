@@ -3,13 +3,12 @@ package marinj.feature.auth.data.repository
 import marinj.core.model.Either
 import marinj.core.model.Failure
 import marinj.feature.auth.data.dao.UsersDao
-import marinj.feature.auth.domain.model.Token
 import marinj.feature.auth.domain.model.User
-import marinj.feature.auth.domain.repository.AuthRepository
+import marinj.feature.auth.domain.repository.UserRepository
 
-class AuthRepositoryImpl(
+class UserRepositoryImpl(
     private val usersDao: UsersDao,
-) : AuthRepository {
+) : UserRepository {
 
     override suspend fun createUser(
         user: User,
@@ -17,12 +16,4 @@ class AuthRepositoryImpl(
 
     override suspend fun getUser(id: Int): Either<Failure, User> =
         usersDao.getUser(id = id)
-
-    override suspend fun generateToken(): Either<Failure, Token> {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun refreshToken(): Either<Failure, Token> {
-        TODO("Not yet implemented")
-    }
 }

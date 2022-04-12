@@ -9,7 +9,7 @@ import marinj.core.model.buildLeft
 import marinj.core.model.buildRight
 import marinj.feature.auth.data.dao.UsersDao
 import marinj.feature.auth.domain.model.User
-import marinj.feature.auth.domain.repository.AuthRepository
+import marinj.feature.auth.domain.repository.UserRepository
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -18,15 +18,15 @@ private const val USER_NAME = "userName"
 private const val PASSWORD = "password"
 private const val USER_ID = 123
 
-internal class AuthRepositoryImplTest {
+internal class UserRepositoryImplTest {
 
     private val usersDao: UsersDao = mockk()
 
-    private lateinit var sut: AuthRepository
+    private lateinit var sut: UserRepository
 
     @BeforeEach
     fun setUp() {
-        sut = AuthRepositoryImpl(
+        sut = UserRepositoryImpl(
             usersDao
         )
     }
