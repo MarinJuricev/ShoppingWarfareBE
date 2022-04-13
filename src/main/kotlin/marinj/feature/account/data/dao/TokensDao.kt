@@ -1,0 +1,94 @@
+package marinj.feature.account.data.dao
+
+import marinj.core.database.dbQuery
+import marinj.core.model.Either
+import marinj.core.model.Failure
+import marinj.core.model.buildLeft
+import marinj.core.model.buildRight
+import marinj.feature.account.domain.model.Token
+import org.jetbrains.exposed.sql.Column
+import org.jetbrains.exposed.sql.ResultRow
+import org.jetbrains.exposed.sql.Table
+import org.jetbrains.exposed.sql.deleteWhere
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.select
+
+interface TokensDao {
+    suspend fun generateToken(
+        userId: Int,
+        accessToken: String,
+        refreshToken: String,
+        expiresAt: Long,
+    ): Either<Failure, Token>
+
+    suspend fun getTokenFromRefreshToken(refreshToken: String): Either<Failure, Token>
+    suspend fun deleteTokenByUserId(userId: Int): Either<Failure, Int>
+}
+
+object Tokens : Table(), TokensDao {
+    private val id: Column<Int> = integer("id").autoIncrement()
+    private val userId: Column<Int> = integer("user_id") references Users.id
+    private val accessToken = varchar("access_token", 300)
+    private val refreshToken = varchar("refresh_token", 300)
+    private val expiresAt = long("expires_at")
+
+    override val primaryKey = PrimaryKey(id)
+
+    override suspend fun generateToken(
+        userId: Int,
+        accessToken: String,
+        refreshToken: String,
+        expiresAt: Long,
+    ): Either<Failure, Token> {
+        val token = dbQuery {
+            Tokens.insert { statement ->
+                statement[Tokens.userId] = userId
+                statement[Tokens.accessToken] = accessToken
+                statement[Tokens.refreshToken] = refreshToken
+                statement[Tokens.expiresAt] = expiresAt
+            }
+        }.resultedValues?.firstOrNull()?.rowToToken()
+
+
+        // Maybe leaking some data which I don't want to return ??? Maybe this is more suited for
+        // logging rather than in the response
+        return token?.buildRight() ?: Failure.Message("""
+            Error while creating token got:
+            userId: $userId
+            accessToken: $accessToken
+            refreshToken: $refreshToken
+            expiresAt: $expiresAt
+        """.trimIndent()).buildLeft()
+    }
+
+    override suspend fun getTokenFromRefreshToken(
+        refreshToken: String,
+    ): Either<Failure, Token> {
+        val token = dbQuery {
+            select {
+                Tokens.refreshToken eq refreshToken
+            }.mapNotNull { resultRow ->
+                resultRow.rowToToken()
+            }.singleOrNull()
+        }
+
+        return token?.buildRight() ?: Failure.Message("""
+            Unable to get token with refreshToken: $refreshToken
+        """.trimIndent()).buildLeft()
+    }
+
+    override suspend fun deleteTokenByUserId(
+        userId: Int,
+    ): Either<Failure, Int> {
+        val test: Int = dbQuery {
+            deleteWhere { Tokens.userId eq userId }
+        }
+    }
+
+    private fun ResultRow.rowToToken(): Token =
+        Token(
+            accessValue = this[accessToken],
+            refreshValue = this[refreshToken],
+            expiresAt = this[expiresAt],
+        )
+}

@@ -19,7 +19,7 @@ interface UsersDao {
 }
 
 object Users : Table(), UsersDao {
-    private val id: Column<Int> = integer("id").autoIncrement()
+    val id: Column<Int> = integer("id").autoIncrement()
     private val email: Column<String> = varchar("email", 128).uniqueIndex()
     private val userName = varchar("user_name", 256)
     private val password = varchar("password", 64)
@@ -30,10 +30,10 @@ object Users : Table(), UsersDao {
         user: User,
     ): Either<Failure, Int> {
         val userId: Int = dbQuery {
-            Users.insert {
-                it[this.email] = user.email
-                it[this.userName] = user.userName
-                it[this.password] = user.password // TODO hash this in another layer, not here.
+            Users.insert { statement ->
+                statement[this.email] = user.email
+                statement[this.userName] = user.userName
+                statement[this.password] = user.password // TODO hash this in another layer, not here.
             } get id
         }
 
@@ -48,8 +48,8 @@ object Users : Table(), UsersDao {
         val user = dbQuery {
             select {
                 Users.id eq id
-            }.mapNotNull {
-                it.rowToUser()
+            }.mapNotNull { resultRow ->
+                resultRow.rowToUser()
             }.singleOrNull()
         }
 
