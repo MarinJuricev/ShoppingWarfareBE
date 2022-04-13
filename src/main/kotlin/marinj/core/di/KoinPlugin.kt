@@ -4,7 +4,6 @@ import io.ktor.server.application.Application
 import io.ktor.server.application.ApplicationPlugin
 import io.ktor.server.application.ApplicationStopping
 import io.ktor.util.AttributeKey
-import marinj.feature.auth.infrastructure.service.AuthService
 import org.koin.core.KoinApplication
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin

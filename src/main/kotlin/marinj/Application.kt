@@ -2,8 +2,8 @@ package marinj
 
 import io.ktor.server.application.Application
 import marinj.core.di.installDi
-import marinj.feature.auth.infrastructure.installAuth
-import marinj.feature.auth.infrastructure.registerAuthRoutes
+import marinj.feature.account.infrastructure.installAuth
+import marinj.feature.account.infrastructure.registerAuthRoutes
 import marinj.plugins.configureRouting
 import marinj.plugins.configureSerialization
 import marinj.plugins.configureSockets

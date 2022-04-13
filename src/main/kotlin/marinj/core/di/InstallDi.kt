@@ -3,12 +3,11 @@ package marinj.core.di
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
 import io.ktor.server.config.ApplicationConfig
-import marinj.core.config.JwtConfig
 import marinj.core.config.ShoppingWarfareConfig
 import marinj.core.config.buildJwtConfig
 import marinj.core.database.DatabaseInitializer
 import marinj.core.database.DatabaseInitializerImpl
-import marinj.feature.auth.di.authModule
+import marinj.feature.account.di.authModule
 import org.koin.dsl.module
 import org.koin.logger.slf4jLogger
 
