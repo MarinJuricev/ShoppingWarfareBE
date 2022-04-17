@@ -35,10 +35,8 @@ class CreateUser(
         }
 
         return when (userResult) {
-            is Right -> {
-                generateToken(userResult.value).let {token ->
-                    tokenRepository.saveToken(token)
-                }
+            is Right -> generateToken(userResult.value).let { token ->
+                tokenRepository.saveToken(token)
             }
             is Left -> userResult
         }
