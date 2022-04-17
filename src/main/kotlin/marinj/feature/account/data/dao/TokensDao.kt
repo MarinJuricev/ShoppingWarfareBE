@@ -3,6 +3,7 @@ package marinj.feature.account.data.dao
 import marinj.core.database.dbQuery
 import marinj.core.model.Either
 import marinj.core.model.Failure
+import marinj.core.model.Failure.*
 import marinj.core.model.buildLeft
 import marinj.core.model.buildRight
 import marinj.feature.account.domain.model.Token
@@ -14,7 +15,7 @@ import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 
 interface TokensDao {
-    suspend fun generateToken(
+    suspend fun saveToken(
         userId: Int,
         accessToken: String,
         refreshToken: String,
@@ -34,7 +35,7 @@ object Tokens : Table(), TokensDao {
 
     override val primaryKey = PrimaryKey(id)
 
-    override suspend fun generateToken(
+    override suspend fun saveToken(
         userId: Int,
         accessToken: String,
         refreshToken: String,
@@ -52,13 +53,15 @@ object Tokens : Table(), TokensDao {
 
         // Maybe leaking some data which I don't want to return ??? Maybe this is more suited for
         // logging rather than in the response
-        return token?.buildRight() ?: Failure.Message("""
+        return token?.buildRight() ?: Message(
+            """
             Error while creating token got:
             userId: $userId
             accessToken: $accessToken
             refreshToken: $refreshToken
             expiresAt: $expiresAt
-        """.trimIndent()).buildLeft()
+        """.trimIndent()
+        ).buildLeft()
     }
 
     override suspend fun getTokenFromRefreshToken(
@@ -72,16 +75,22 @@ object Tokens : Table(), TokensDao {
             }.singleOrNull()
         }
 
-        return token?.buildRight() ?: Failure.Message("""
-            Unable to get token with refreshToken: $refreshToken
-        """.trimIndent()).buildLeft()
+        return token?.buildRight() ?: Message(
+            "Unable to get token with refreshToken: $refreshToken"
+        ).buildLeft()
     }
 
     override suspend fun deleteTokenByUserId(
         userId: Int,
     ): Either<Failure, Int> {
-        val test: Int = dbQuery {
+        val deleteResult: Int = dbQuery {
             deleteWhere { Tokens.userId eq userId }
+        }
+
+        return if (deleteResult > 0) {
+            deleteResult.buildRight()
+        } else {
+            Message("Unable to delete token with id: $userId").buildLeft()
         }
     }
 
