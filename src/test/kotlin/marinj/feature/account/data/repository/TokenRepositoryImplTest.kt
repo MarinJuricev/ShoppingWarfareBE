@@ -7,6 +7,7 @@ import kotlinx.coroutines.test.runTest
 import marinj.core.model.Failure
 import marinj.core.model.buildLeft
 import marinj.feature.account.data.dao.TokensDao
+import marinj.feature.account.domain.model.Token
 import marinj.feature.account.domain.repository.TokenRepository
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -32,11 +33,18 @@ internal class TokenRepositoryImplTest {
     @Test
     fun `saveToken should return result from tokensDao saveToken`() = runTest {
         val daoResult = Failure.Unknown.buildLeft()
+        val token = Token(
+            userId = USER_ID,
+            accessValue = ACCESS_TOKEN,
+            refreshValue = REFRESH_TOKEN,
+            expiresAt = EXPIRES_AT,
+        )
+
         coEvery {
-            tokensDao.saveToken(USER_ID, ACCESS_TOKEN, REFRESH_TOKEN, EXPIRES_AT)
+            tokensDao.saveToken(token)
         } coAnswers { daoResult }
 
-        val result = sut.saveToken(USER_ID, ACCESS_TOKEN, REFRESH_TOKEN, EXPIRES_AT)
+        val result = sut.saveToken(token)
 
         assertThat(result).isEqualTo(daoResult)
     }

@@ -18,6 +18,7 @@ import marinj.feature.account.domain.usecase.GenerateToken
 import marinj.feature.account.infrastructure.service.AuthService
 import marinj.feature.account.infrastructure.service.AuthServiceImpl
 import org.koin.dsl.module
+import java.util.UUID
 
 val authModule = module {
     single<UsersDao> { Users }
@@ -38,13 +39,17 @@ val authModule = module {
         CreateUser(
             userRepository = get(),
             tokenRepository = get(),
+            generateToken = get()
         )
     }
     factory {
         GenerateToken(
             jwtCreator = get(),
             config = get(),
-            algorithm = get()
+            algorithm = get(),
+            //TODO if the need arises to reuse currentTime/uuid provider, then we can move them into separate module or provide them as named dependencies
+            currentTimeProvider = { System.currentTimeMillis() },
+            uuidProvider = { UUID.randomUUID().toString() }
         )
     }
 

@@ -16,10 +16,7 @@ import org.jetbrains.exposed.sql.select
 
 interface TokensDao {
     suspend fun saveToken(
-        userId: Int,
-        accessToken: String,
-        refreshToken: String,
-        expiresAt: Long,
+        providedToken: Token
     ): Either<Failure, Token>
 
     suspend fun getTokenFromRefreshToken(refreshToken: String): Either<Failure, Token>
@@ -36,17 +33,14 @@ object Tokens : Table(), TokensDao {
     override val primaryKey = PrimaryKey(id)
 
     override suspend fun saveToken(
-        userId: Int,
-        accessToken: String,
-        refreshToken: String,
-        expiresAt: Long,
+        providedToken: Token
     ): Either<Failure, Token> {
         val token = dbQuery {
             Tokens.insert { statement ->
-                statement[Tokens.userId] = userId
-                statement[Tokens.accessToken] = accessToken
-                statement[Tokens.refreshToken] = refreshToken
-                statement[Tokens.expiresAt] = expiresAt
+                statement[userId] = providedToken.userId
+                statement[accessToken] = providedToken.accessValue
+                statement[refreshToken] = providedToken.refreshValue
+                statement[expiresAt] = providedToken.expiresAt
             }
         }.resultedValues?.firstOrNull()?.rowToToken()
 
@@ -96,6 +90,7 @@ object Tokens : Table(), TokensDao {
 
     private fun ResultRow.rowToToken(): Token =
         Token(
+            userId = this[userId],
             accessValue = this[accessToken],
             refreshValue = this[refreshToken],
             expiresAt = this[expiresAt],

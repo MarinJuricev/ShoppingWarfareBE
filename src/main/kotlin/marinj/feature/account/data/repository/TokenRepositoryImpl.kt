@@ -10,15 +10,9 @@ class TokenRepositoryImpl(
     private val tokensDao: TokensDao,
 ) : TokenRepository {
     override suspend fun saveToken(
-        userId: Int,
-        accessToken: String,
-        refreshToken: String,
-        expiresAt: Long,
+        token: Token,
     ): Either<Failure, Token> = tokensDao.saveToken(
-        userId = userId,
-        accessToken = accessToken,
-        refreshToken = refreshToken,
-        expiresAt = expiresAt,
+        providedToken = token
     )
 
     override suspend fun getTokenFromRefreshToken(

@@ -5,12 +5,7 @@ import marinj.core.model.Failure
 import marinj.feature.account.domain.model.Token
 
 interface TokenRepository {
-    suspend fun saveToken(
-        userId: Int,
-        accessToken: String,
-        refreshToken: String,
-        expiresAt: Long,
-    ): Either<Failure, Token>
+    suspend fun saveToken(token: Token): Either<Failure, Token>
 
     suspend fun getTokenFromRefreshToken(refreshToken: String): Either<Failure, Token>
 
