@@ -77,6 +77,7 @@ val authModule = module {
     factory<AccountService> {
         AccountServiceImpl(
             createUserUseCase = get(),
+            jwtVerifier = get(),
         )
     }
 }

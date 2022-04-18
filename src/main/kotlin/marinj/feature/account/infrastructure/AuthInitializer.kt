@@ -15,13 +15,12 @@ import marinj.feature.account.infrastructure.service.AccountService
 fun Application.installAuth() {
 
     val accountService: AccountService by inject()
-    val jwtVerifier: JWTVerifier by inject()
     val config: ShoppingWarfareConfig by inject()
 
     install(Authentication) {
         jwt {
             realm = config.jwtConfig.secret
-            verifier(jwtVerifier)
+            verifier(accountService.jwtVerifier)
             validate { credential ->
                 //TODO actually configure this to get the userId from the service
                 if (credential.payload.getClaim("id").asString() != "") {

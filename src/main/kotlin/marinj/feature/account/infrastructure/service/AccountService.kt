@@ -1,5 +1,6 @@
 package marinj.feature.account.infrastructure.service
 
+import com.auth0.jwt.JWTVerifier
 import marinj.core.model.Either
 import marinj.core.model.Either.*
 import marinj.core.model.Failure
@@ -7,6 +8,8 @@ import marinj.feature.account.domain.usecase.CreateUser
 import marinj.feature.account.infrastructure.model.ResponseToken
 
 interface AccountService {
+
+    val jwtVerifier: JWTVerifier
     suspend fun createUser(
         email: String?,
         password: String?,
@@ -20,6 +23,7 @@ interface AccountService {
 
 class AccountServiceImpl(
     private val createUserUseCase: CreateUser,
+    override val jwtVerifier: JWTVerifier,
 ) : AccountService {
 
     override suspend fun createUser(
