@@ -15,8 +15,8 @@ import marinj.feature.account.domain.repository.TokenRepository
 import marinj.feature.account.domain.repository.UserRepository
 import marinj.feature.account.domain.usecase.CreateUser
 import marinj.feature.account.domain.usecase.GenerateToken
-import marinj.feature.account.infrastructure.service.AuthService
-import marinj.feature.account.infrastructure.service.AuthServiceImpl
+import marinj.feature.account.infrastructure.service.AccountService
+import marinj.feature.account.infrastructure.service.AccountServiceImpl
 import org.koin.dsl.module
 import java.util.UUID
 
@@ -74,8 +74,8 @@ val authModule = module {
         Algorithm.HMAC256(config.jwtConfig.secret)
     }
 
-    factory<AuthService> {
-        AuthServiceImpl(
+    factory<AccountService> {
+        AccountServiceImpl(
             createUserUseCase = get(),
         )
     }

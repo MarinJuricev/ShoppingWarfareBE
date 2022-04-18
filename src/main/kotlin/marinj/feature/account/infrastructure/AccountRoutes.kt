@@ -8,18 +8,18 @@ import io.ktor.server.routing.post
 import io.ktor.server.routing.routing
 import marinj.core.di.inject
 import marinj.feature.account.infrastructure.model.RequestUser
-import marinj.feature.account.infrastructure.service.AuthService
+import marinj.feature.account.infrastructure.service.AccountService
 
 fun Application.registerAuthRoutes() {
 
-    val authService: AuthService by inject()
+    val accountService: AccountService by inject()
 
     routing {
-        registerRoute(authService)
+        registerRoute(accountService)
     }
 }
 
-fun Route.registerRoute(authService: AuthService) {
+fun Route.registerRoute(accountService: AccountService) {
 
     post("/v1/register") {
         val requestUser = call.receiveOrNull<RequestUser>()
