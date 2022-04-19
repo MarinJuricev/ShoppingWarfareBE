@@ -10,7 +10,7 @@ import marinj.core.model.Either.Left
 import marinj.core.model.Either.Right
 import marinj.feature.account.infrastructure.service.AccountService
 
-fun Application.installAuth() {
+fun Application.installAccount() {
 
     val accountService: AccountService by inject()
     val config: ShoppingWarfareConfig by inject()

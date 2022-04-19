@@ -15,6 +15,7 @@ import marinj.feature.account.domain.repository.TokenRepository
 import marinj.feature.account.domain.repository.UserRepository
 import marinj.feature.account.domain.usecase.CreateUser
 import marinj.feature.account.domain.usecase.GenerateToken
+import marinj.feature.account.domain.usecase.ValidateAccessToken
 import marinj.feature.account.infrastructure.service.AccountService
 import marinj.feature.account.infrastructure.service.AccountServiceImpl
 import org.koin.dsl.module
@@ -52,6 +53,11 @@ val authModule = module {
             uuidProvider = { UUID.randomUUID().toString() }
         )
     }
+    factory {
+        ValidateAccessToken(
+            tokenRepository = get(),
+        )
+    }
 
     factory<JWTVerifier> {
         val config = get<ShoppingWarfareConfig>()
@@ -78,6 +84,7 @@ val authModule = module {
         AccountServiceImpl(
             createUserUseCase = get(),
             jwtVerifier = get(),
+            validateAccessTokenUseCase = get()
         )
     }
 }
