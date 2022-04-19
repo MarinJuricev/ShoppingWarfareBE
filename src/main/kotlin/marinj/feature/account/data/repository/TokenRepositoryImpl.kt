@@ -15,6 +15,10 @@ class TokenRepositoryImpl(
         providedToken = token
     )
 
+    override suspend fun getTokenFromAccessToken(
+        accessToken: String
+    ): Either<Failure, Token> = tokensDao.getTokenFromAccessToken(accessToken)
+
     override suspend fun getTokenFromRefreshToken(
         refreshToken: String,
     ): Either<Failure, Token> = tokensDao.getTokenFromRefreshToken(refreshToken)

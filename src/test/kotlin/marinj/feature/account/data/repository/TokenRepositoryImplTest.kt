@@ -31,7 +31,7 @@ internal class TokenRepositoryImplTest {
     }
 
     @Test
-    fun `saveToken should return result from tokensDao saveToken`() = runTest {
+    fun `saveToken SHOULD return result from tokensDao saveToken`() = runTest {
         val daoResult = Failure.Unknown.buildLeft()
         val token = Token(
             userId = USER_ID,
@@ -50,7 +50,19 @@ internal class TokenRepositoryImplTest {
     }
 
     @Test
-    fun `getTokenFromRefreshToken should return result from tokensDao getTokenFromRefreshToken`() = runTest {
+    fun `getTokenFromAccessToken SHOULD return result from tokensDao getTokenFromAccessToken`() = runTest {
+        val daoResult = Failure.Unknown.buildLeft()
+        coEvery {
+            tokensDao.getTokenFromAccessToken(ACCESS_TOKEN)
+        } coAnswers { daoResult }
+
+        val result = sut.getTokenFromAccessToken(ACCESS_TOKEN)
+
+        assertThat(result).isEqualTo(daoResult)
+    }
+
+    @Test
+    fun `getTokenFromRefreshToken SHOULD return result from tokensDao getTokenFromRefreshToken`() = runTest {
         val daoResult = Failure.Unknown.buildLeft()
         coEvery {
             tokensDao.getTokenFromRefreshToken(REFRESH_TOKEN)
@@ -62,7 +74,7 @@ internal class TokenRepositoryImplTest {
     }
 
     @Test
-    fun `deleteTokenByUserId should return result from tokensDao deleteTokenByUserId`() = runTest {
+    fun `deleteTokenByUserId SHOULD return result from tokensDao deleteTokenByUserId`() = runTest {
         val daoResult = Failure.Unknown.buildLeft()
         coEvery {
             tokensDao.deleteTokenByUserId(USER_ID)

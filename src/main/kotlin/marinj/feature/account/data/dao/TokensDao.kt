@@ -3,7 +3,7 @@ package marinj.feature.account.data.dao
 import marinj.core.database.dbQuery
 import marinj.core.model.Either
 import marinj.core.model.Failure
-import marinj.core.model.Failure.*
+import marinj.core.model.Failure.Message
 import marinj.core.model.buildLeft
 import marinj.core.model.buildRight
 import marinj.feature.account.domain.model.Token
@@ -19,6 +19,7 @@ interface TokensDao {
         providedToken: Token
     ): Either<Failure, Token>
 
+    suspend fun getTokenFromAccessToken(accessToken: String): Either<Failure, Token>
     suspend fun getTokenFromRefreshToken(refreshToken: String): Either<Failure, Token>
     suspend fun deleteTokenByUserId(userId: Int): Either<Failure, Int>
 }
@@ -55,6 +56,22 @@ object Tokens : Table(), TokensDao {
             refreshToken: $refreshToken
             expiresAt: $expiresAt
         """.trimIndent()
+        ).buildLeft()
+    }
+
+    override suspend fun getTokenFromAccessToken(
+        accessToken: String
+    ): Either<Failure, Token> {
+        val token = dbQuery {
+            select {
+                Tokens.accessToken eq accessToken
+            }.mapNotNull { resultRow ->
+                resultRow.rowToToken()
+            }.singleOrNull()
+        }
+
+        return token?.buildRight() ?: Message(
+            "Unable to get token with accessToken: $accessToken"
         ).buildLeft()
     }
 
